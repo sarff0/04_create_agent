@@ -170,7 +170,7 @@ async def assisrant_query(user_query: str):
     # res = await agent.ainvoke({"message":[time_system_prompt,{"role":"user","content":user_query}]}, config=config)
     
     # 3.如何去调用agent：通过流式输出
-    async for chunk in agent.astream({"message":[time_system_prompt,{"role":"user","content":user_query}]}, config=config,stream_mode="messages"):
+    async for chunk in agent.astream({"messages":[time_system_prompt,{"role":"user","content":user_query}]}, config=config,stream_mode="messages"):
         # chunk首先一个tuple：(AIMessgeChunk/ToolMessage,_)
         message_chunk = chunk[0]
 
@@ -185,7 +185,7 @@ async def assisrant_query(user_query: str):
         import json
         payload = {"content": message_chunk.content, "type": "token"}
         payload_str = json.dumps(payload, ensure_ascii=False)
-        yield f"data:{payload_str}\n\n"
+        yield f"data: {payload_str}\n\n"
 
 
 async def create_agent():
@@ -226,7 +226,7 @@ async def create_agent():
 async def run_agent():
     agent = await create_agent()
     config = {"configurable":{"thread_id": "123"}}
-    res = await agent.ainvoke({"message":[{"role":"user","content":"你能干嘛"}]}, config=config)
+    res = await agent.ainvoke({"messages":[{"role":"user","content":"你能干嘛"}]}, config=config)
     print("RESULT",res)
     print("#"*50)
     print("AI_MESSAGE",res["messages"][-1].content)
